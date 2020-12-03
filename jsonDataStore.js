@@ -37,8 +37,8 @@ function remove(id) {
 
 function getById(id) {
     const fid = data.findIndex(item => item.id == id)
-    if (fid == -1)
-        return null
+    // if (fid == -1)
+    //     return null
     return data[fid]
 }
 

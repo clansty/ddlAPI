@@ -5,8 +5,8 @@ const port = 3000
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 
-const dataStore=require('./jsonDataStore')
-const auth=require('./auth')
+const dataStore = require('./jsonDataStore')
+const auth = require('./auth')
 
 app.use(cors());
 
@@ -16,32 +16,56 @@ app.get('/', (req, res) => {
 
 app.use(auth.authVerify)//the methods below need auth
 
-app.get('/api/all', (req, res)=>{
+app.get('/api/all', (req, res) => {
   res.send(dataStore.getAll())
 })
 
-app.get('/api/item/:id', (req, res)=>{
-  const result=dataStore.getById(req.params.id)
-  if(result==null){
+app.get('/api/item/:id', (req, res) => {
+  const result = dataStore.getById(req.params.id)
+  if (result == null) {
     res.status(404).send({ code: 404 })
     return
   }
   res.send(result)
 })
 
-app.put('/api/item/:id', jsonParser, (req, res)=>{
-  const result=dataStore.modify(req.params.id, req.body)
+app.put('/api/item/:id', jsonParser, (req, res) => {
+  const result = dataStore.modify(req.params.id, req.body)
   res.status(result).send({ code: result })
 })
 
-app.delete('/api/item/:id', (req, res)=>{
+app.delete('/api/item/:id', (req, res) => {
   const result = dataStore.remove(req.params.id)
   res.status(result).send({ code: result })
 })
 
-app.post('/api/add', jsonParser, (req, res)=>{
+app.post('/api/add', jsonParser, (req, res) => {
   const result = dataStore.add(req.body)
   res.status(result).send({ code: result })
+})
+
+app.post('/api/user/resetToken', jsonParser, (req, res) => {
+  const token = req.headers['x-auth']
+  const uid = req.body.uid
+  const opter = auth.getUserByToken(token)
+  if (opter.auth != auth.bot) {
+    res.status(403).send({ code: 403 })
+    return
+  }
+  if (!uid) {
+    res.status(400).send({ code: 400 })
+    return
+  }
+  const newToken = auth.resetUserToken(uid)
+  res.status(200).send({
+    code: 200,
+    token: newToken
+  })
+})
+
+app.get('/api/user/me', (req, res)=>{
+  const token = req.headers['x-auth']
+  res.send(auth.getUserByToken(token))
 })
 
 app.listen(port, () => {
