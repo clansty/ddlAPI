@@ -2,7 +2,7 @@ const fs = require('fs')
 const uuid = require('node-uuid');
 
 // Store the schedules that are public on the server
-const data = require('./data/ddls')
+const data = require('./data/tasks')
 
 function add(body) {
     if(!body.name)
@@ -18,7 +18,7 @@ function modify(id, body) {
     if(item==null)
         return 404
     for(var key in body){
-        if(key==id)
+        if(key=='id' || key=='status')
             continue
         item[key]=body[key]
     }
@@ -37,8 +37,6 @@ function remove(id) {
 
 function getById(id) {
     const fid = data.findIndex(item => item.id == id)
-    // if (fid == -1)
-    //     return null
     return data[fid]
 }
 
@@ -46,8 +44,18 @@ function getAll() {
     return data
 }
 
+function setStatus(id, uid, status){
+    const item=getById(id)
+    if(!item)
+        return 404
+    if(!item.status)
+        item.status={}
+    item.status[uid]=status
+    return 200
+}
+
 function save() {
-    fs.writeFile('./data/ddls.json', JSON.stringify(data), () => { })
+    fs.writeFile('./data/tasks.json', JSON.stringify(data), () => { })
 }
 
 module.exports = {
@@ -55,5 +63,6 @@ module.exports = {
     remove,
     getById,
     getAll,
-    modify
+    modify,
+    setStatus
 }
