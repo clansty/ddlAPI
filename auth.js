@@ -1,6 +1,6 @@
 // this file provides auth service for the api
 
-var users=require('./data/users')
+const users=require('./data/users')
 
 function authVerify(req, res, next){
     if(!req.headers['x-auth']){

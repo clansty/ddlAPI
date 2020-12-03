@@ -2,13 +2,26 @@ const fs = require('fs')
 const uuid = require('node-uuid');
 
 // Store the schedules that are public on the server
-var data = require('./data/ddls')
+const data = require('./data/ddls')
 
 function add(body) {
     if(!body.name)
         return 406    
     body.id=uuid.v1()
     data.push(body)
+    save()
+    return 200
+}
+
+function modify(id, body) {
+    const item = getById(id)
+    if(item==null)
+        return 404
+    for(var key in body){
+        if(key==id)
+            continue
+        item[key]=body[key]
+    }
     save()
     return 200
 }
@@ -41,5 +54,6 @@ module.exports = {
     add,
     remove,
     getById,
-    getAll
+    getAll,
+    modify
 }

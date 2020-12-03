@@ -29,13 +29,18 @@ app.get('/api/item/:id', (req, res)=>{
   res.send(result)
 })
 
+app.put('/api/item/:id', jsonParser, (req, res)=>{
+  const result=dataStore.modify(req.params.id, req.body)
+  res.status(result).send({ code: result })
+})
+
 app.delete('/api/item/:id', (req, res)=>{
-  var result = dataStore.remove(req.params.id)
+  const result = dataStore.remove(req.params.id)
   res.status(result).send({ code: result })
 })
 
 app.post('/api/add', jsonParser, (req, res)=>{
-  var result = dataStore.add(req.body)
+  const result = dataStore.add(req.body)
   res.status(result).send({ code: result })
 })
 
