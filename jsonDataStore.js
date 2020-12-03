@@ -5,9 +5,9 @@ const uuid = require('node-uuid');
 const data = require('./data/tasks')
 
 function add(body) {
-    if(!body.name)
-        return 406    
-    body.id=uuid.v1()
+    if (!body.name)
+        return 406
+    body.id = uuid.v1()
     data.push(body)
     save()
     return 200
@@ -15,12 +15,12 @@ function add(body) {
 
 function modify(id, body) {
     const item = getById(id)
-    if(item==null)
+    if (item == null)
         return 404
-    for(var key in body){
-        if(key=='id' || key=='status')
+    for (var key in body) {
+        if (key == 'id' || key == 'status')
             continue
-        item[key]=body[key]
+        item[key] = body[key]
     }
     save()
     return 200
@@ -44,13 +44,13 @@ function getAll() {
     return data
 }
 
-function setStatus(id, uid, status){
-    const item=getById(id)
-    if(!item)
+function setStatus(id, uid, status) {
+    const item = getById(id)
+    if (!item)
         return 404
-    if(!item.status)
-        item.status={}
-    item.status[uid]=status
+    if (!item.status)
+        item.status = {}
+    item.status[uid] = status
     return 200
 }
 

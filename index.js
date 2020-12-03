@@ -45,16 +45,16 @@ app.post('/api/add', jsonParser, (req, res) => {
 })
 
 app.post('/api/status/:id', jsonParser, (req, res) => {
-	if(!req.body.status){
+	if (!req.body.status) {
 		res.status(400).send({ code: 400 })
 		return
 	}
-	const user=auth.getUserByToken(req.headers['x-auth'])
-	const result=dataStore.setStatus(req.params.id, user.uid, status)
+	const user = auth.getUserByToken(req.headers['x-auth'])
+	const result = dataStore.setStatus(req.params.id, user.uid, status)
 	res.status(result).send({ code: result })
 })
 
-app.post('/api/user/resetToken', jsonParser, (req, res) => {
+app.post('/api/bot/resetToken', jsonParser, (req, res) => {
 	const token = req.headers['x-auth']
 	const uid = req.body.uid
 	const opter = auth.getUserByToken(token)
@@ -73,7 +73,23 @@ app.post('/api/user/resetToken', jsonParser, (req, res) => {
 	})
 })
 
-app.get('/api/user/me', (req, res)=>{
+app.post('/api/bot/status/:id', jsonParser, (req, res) => {
+	const token = req.headers['x-auth']
+	const uid = req.body.uid
+	const opter = auth.getUserByToken(token)
+	if (opter.auth != auth.bot) {
+		res.status(403).send({ code: 403 })
+		return
+	}
+	if (!uid || !req.body.status) {
+		res.status(400).send({ code: 400 })
+		return
+	}
+	const result = dataStore.setStatus(req.params.id, uid, req.body.status)
+	res.status(result).send({ code: result })
+})
+
+app.get('/api/user/me', (req, res) => {
 	const token = req.headers['x-auth']
 	res.send(auth.getUserByToken(token))
 })
