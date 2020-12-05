@@ -14,6 +14,12 @@ app.get('/', (req, res) => {
 	res.send('Welcome to ddl manager API!')
 })
 
+app.get('/api/system', (req, res)=>{
+	res.send({
+		version: "0.1.0"
+	})
+})
+
 app.use(auth.authVerify)//the methods below need auth
 
 app.get('/api/all', (req, res) => {

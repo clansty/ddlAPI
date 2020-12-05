@@ -17,9 +17,9 @@ function authVerify(req, res, next) {
     }
     var u = getUserByToken(req.headers['x-auth'])
     if (!u || !u.auth) {
-        res.status(403).send({
-            code: 403,
-            msg: "Forbidden"
+        res.status(401).send({
+            code: 401,
+            msg: "Unauthorized"
         })
         return
     }
