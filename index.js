@@ -1,9 +1,11 @@
 const express = require('express')
 const cors = require('cors')
 const app = express()
-const port = 3000
+const port = 3667
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
+const execSync = require('child_process').execSync;
+const version = VERSION = require('./package.json').version + '@' + execSync('git show -s --format=%h').toString().trim()
 
 const dataStore = require('./jsonDataStore')
 const auth = require('./auth')
@@ -16,7 +18,7 @@ app.get('/', (req, res) => {
 
 app.get('/api/system', (req, res)=>{
 	res.send({
-		version: "0.1.0"
+		version
 	})
 })
 
@@ -51,12 +53,12 @@ app.post('/api/add', jsonParser, (req, res) => {
 })
 
 app.post('/api/status/:id', jsonParser, (req, res) => {
-	if (!req.body.status) {
+	if (req.body.status == null) {
 		res.status(400).send({ code: 400 })
 		return
 	}
 	const user = auth.getUserByToken(req.headers['x-auth'])
-	const result = dataStore.setStatus(req.params.id, user.uid, status)
+	const result = dataStore.setStatus(req.params.id, user.uid, req.body.status)
 	res.status(result).send({ code: result })
 })
 

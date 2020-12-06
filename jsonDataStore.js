@@ -51,6 +51,7 @@ function setStatus(id, uid, status) {
     if (!item.status)
         item.status = {}
     item.status[uid] = status
+    save()
     return 200
 }
 
