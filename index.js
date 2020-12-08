@@ -25,7 +25,14 @@ app.get('/api/system', (req, res)=>{
 app.use(auth.authVerify)//the methods below need auth
 
 app.get('/api/all', (req, res) => {
-	res.send(dataStore.getAll())
+	var tasks = Object.assign({}, dataStore.getAll())
+	var user=auth.getUserByToken(req.headers['x-auth'])
+	tasks.forEach(i => {
+		if (i.status && i.status[user.uid]) {
+			i.done = true
+		}
+	});
+	res.send(tasks)
 })
 
 app.get('/api/item/:id', (req, res) => {
